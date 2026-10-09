@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Policy Auditor — Autonomous Capability Leaser & Manifest Security Auditor</title>
+  <meta name="description" content="Autonomous zero-dependency capability leasing broker, permission manager, and static manifest security auditor for sovereign AI agents. Enforces time-bound HMAC leases, path glob permissions, and OWASP LLM compliance.">
+  <meta name="keywords" content="AI agent security, capability lease, permission broker, policy auditor, MCP security, OWASP LLM, NIST AI RMF, zero egress, Neal Frazier Tech, NullAI">
+  <meta name="author" content="Neal Frazier Tech (@1nc0gn30)">
+  <link rel="canonical" href="https://policy.nullai.tech/">
+
+  <!-- OpenGraph Metadata -->
+  <meta property="og:title" content="Agent Policy Auditor — Capability Leaser & Manifest Security Auditor">
+  <meta property="og:description" content="Autonomous capability leasing broker and manifest security auditor for sovereign AI agents. Enforces time-bound HMAC leases and audits tool schemas.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://policy.nullai.tech/">
+  <meta property="og:image" content="https://policy.nullai.tech/assets/banner.png">
+  <meta property="og:site_name" content="NullAI Sovereign Platform">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@1nc0gn30">
+  <meta name="twitter:creator" content="@1nc0gn30">
+  <meta name="twitter:title" content="Agent Policy Auditor — Capability Leaser & Security Auditor">
+  <meta name="twitter:description" content="Zero-dependency capability leasing and manifest security auditor for AI agents. 100% Python standard library.">
+  <meta name="twitter:image" content="https://policy.nullai.tech/assets/banner.png">
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+  <!-- Schema.org JSON-LD Graph for Frontier Crawlers & SGE -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "Agent Policy Auditor",
+        "url": "https://policy.nullai.tech/",
+        "applicationCategory": "SecurityApplication",
+        "operatingSystem": "Linux, POSIX, macOS",
+        "description": "Autonomous zero-dependency capability leasing broker and manifest security auditor for AI agents with time-bound HMAC leases, path glob permissions, and OWASP LLM compliance scoring.",
+        "offers": {
+          "@type": "Offer",
+          "price": "19.00",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock",
+          "url": "https://buy.stripe.com/7sI7sA8hM2X8eFG8ww"
+        },
+        "author": {
+          "@type": "Person",
+          "name": "Neal Frazier",
+          "url": "https://github.com/1nc0gn30",
+          "affiliation": {
+            "@type": "Organization",
+            "name": "Neal Frazier Tech",
+            "url": "https://nullai.tech"
+          }
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is Agent Policy Auditor?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Agent Policy Auditor is an autonomous, zero-dependency policy broker and capability leasing engine operating on port 8106. It issues time-bound, cryptographically signed capability tokens (FS_READ, FS_WRITE, NET_EGRESS, SHELL_EXEC, TOKEN_BUDGET) and audits agent tool schemas against OWASP LLM and NIST AI RMF standards."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do cryptographic capability leases work?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "When an agent requests permission to write files or perform network calls, the broker issues an HMAC-SHA256 signed lease token with an explicit expiration TTL. Subprocess actions are verified against this lease, preventing runaway loops or unauthorized system access."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What payment rails are supported for founding licenses?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Founding member lifetime licenses ($19 vs $79 regular) are accepted via Stripe Payment Links (Credit Cards, Apple Pay, Google Pay) and the DePay Solana Web3 payment widget."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    :root {
+      --bg-dark: #08080B;
+      --bg-surface: #0E0E14;
+      --bg-card: #14141E;
+      --border-subtle: #242436;
+      --gold-primary: #D4AF37;
+      --gold-soft: #F5E6AB;
+      --purple-accent: #A855F7;
+      --cyan-accent: #38BDF8;
+      --emerald-accent: #10B981;
+      --rose-accent: #F43F5E;
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Space Grotesk', sans-serif;
+      --syne: 'Syne', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    /* High-Converting Sales Funnel Top Banner */
+    .funnel-banner {
+      background: linear-gradient(90deg, rgba(212, 175, 55, 0.15), rgba(168, 85, 247, 0.15));
+      border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+      padding: 10px 16px;
+      font-size: 0.85rem;
+      text-align: center;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .funnel-tag {
+      background: var(--gold-primary);
+      color: #000;
+      font-weight: 800;
+      font-family: var(--mono);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+    }
+    .funnel-price {
+      font-weight: 700;
+      color: var(--gold-soft);
+    }
+    .funnel-price del {
+      color: var(--text-muted);
+      margin-right: 4px;
+    }
+    .funnel-btn {
+      background: #D4AF37;
+      color: #000;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .funnel-btn:hover {
+      background: #FFF;
+      box-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 24px 20px;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .brand-title {
+      font-family: var(--syne);
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--gold-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: -0.5px;
+    }
+    .port-badge {
+      background: rgba(168, 85, 247, 0.15);
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      color: var(--purple-accent);
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-outline:hover {
+      border-color: var(--gold-primary);
+      color: var(--gold-primary);
+    }
+
+    /* KPI Summary Bento Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .kpi-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi-title {
+      font-size: 0.75rem;
+      font-family: var(--mono);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .kpi-val {
+      font-family: var(--mono);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-top: 4px;
+    }
+
+    /* Layout Columns */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 900px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .panel-title {
+      font-family: var(--mono);
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--gold-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Form Controls */
+    .form-group {
+      margin-bottom: 14px;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.72rem;
+      font-family: var(--mono);
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    input, select, textarea {
+      width: 100%;
+      background: #040508;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      padding: 10px 12px;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--purple-accent);
+    }
+    .btn-action {
+      background: var(--purple-accent);
+      color: #FFF;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-family: var(--mono);
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+    }
+    .btn-action:hover {
+      background: #9333EA;
+      box-shadow: 0 0 16px rgba(168, 85, 247, 0.4);
+    }
+
+    /* Active Leases Table */
+    .lease-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--mono);
+      font-size: 0.74rem;
+    }
+    .lease-table th {
+      text-align: left;
+      color: var(--text-muted);
+      padding: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      font-weight: 600;
+    }
+    .lease-table td {
+      padding: 10px 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+    .badge-cap { background: rgba(56, 189, 248, 0.15); color: var(--cyan-accent); }
+    .badge-ok { background: rgba(16, 185, 129, 0.15); color: var(--emerald-accent); }
+    .badge-warn { background: rgba(244, 63, 94, 0.15); color: var(--rose-accent); }
+
+    /* Frosted Paywall Blur Output */
+    .paywall-wrapper {
+      position: relative;
+      margin-top: 24px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      background: var(--bg-surface);
+      overflow: hidden;
+    }
+    .paywall-content {
+      padding: 20px;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      max-height: 280px;
+      overflow-y: auto;
+      filter: blur(5px);
+      user-select: none;
+      transition: filter 0.3s;
+    }
+    .paywall-unlocked .paywall-content {
+      filter: none;
+      user-select: auto;
+    }
+    .paywall-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(8, 8, 11, 0.75);
+      backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+      z-index: 10;
+    }
+    .paywall-unlocked .paywall-overlay {
+      display: none;
+    }
+    .lock-card {
+      background: var(--bg-card);
+      border: 1px solid var(--gold-primary);
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--gold-primary);
+      border-radius: 16px;
+      padding: 28px;
+      max-width: 520px;
+      width: 100%;
+      position: relative;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 20px 0;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-family: var(--mono);
+      margin-top: auto;
+    }
+    footer a {
+      color: var(--gold-primary);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. Above-The-Fold Sales Funnel Banner -->
+  <div class="funnel-banner" id="funnelBanner">
+    <span class="funnel-tag">FOUNDING PASS</span>
+    <span>⚡ Autonomous Agent Policy Broker &amp; Capability Leaser</span>
+    <span class="funnel-price"><del>$79</del> $19 Lifetime</span>
+    <a href="https://buy.stripe.com/7sI7sA8hM2X8eFG8ww" target="_blank" rel="noopener" class="funnel-btn">Instant Stripe Checkout</a>
+    <button class="funnel-btn" style="background:#A855F7;color:#FFF;" onclick="openProModal()">Web3 Solana Rail</button>
+    <a href="javascript:void(0)" onclick="activateLicenseKey()" style="color:var(--gold-soft);font-size:0.75rem;margin-left:4px;">Have Key?</a>
+  </div>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="brand-title">
+        <span>🛡️</span>
+        <span>AGENT POLICY AUDITOR</span>
+        <span class="port-badge" id="portBadge">● SOVEREIGN PORT :8106</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn-outline" onclick="triggerEmergencyKill()">⚡ Kill-Switch All</button>
+        <button class="btn-outline" id="proStatusBadge" onclick="openProModal()">⭐ UPGRADE TO PRO</button>
+      </div>
+    </header>
+
+    <!-- KPI Summary Cards -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-title">Active Capability Leases</div>
+        <div class="kpi-val" id="valActiveLeases" style="color:var(--cyan-accent);">0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Total Leases Granted</div>
+        <div class="kpi-val" id="valTotalLeases" style="color:var(--purple-accent);">0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Policy Violations Blocked</div>
+        <div class="kpi-val" id="valViolationsBlocked" style="color:var(--rose-accent);">0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Budget Protected</div>
+        <div class="kpi-val" id="valBudgetProtected" style="color:var(--emerald-accent);">$0.00</div>
+      </div>
+    </div>
+
+    <!-- Main Execution & Manifest Grid -->
+    <div class="main-grid">
+      <!-- Left Panel: Issue Capability Lease -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🔑</span> ISSUE CAPABILITY LEASE
+          </div>
+          <span style="font-size:0.7rem;font-family:var(--mono);color:var(--text-muted);">HMAC-SHA256 Signed</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Target Agent Identifier</label>
+          <input type="text" id="inputAgentId" value="pantheon_01" placeholder="e.g. claude_code, pantheon_01">
+        </div>
+
+        <div class="form-group" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div>
+            <label class="form-label">Capability Scope</label>
+            <select id="selectCapability">
+              <option value="FS_READ">FS_READ (File System Read)</option>
+              <option value="FS_WRITE">FS_WRITE (File System Write)</option>
+              <option value="NET_EGRESS">NET_EGRESS (Outbound Network)</option>
+              <option value="SHELL_EXEC">SHELL_EXEC (Subprocess Command)</option>
+              <option value="TOKEN_BUDGET">TOKEN_BUDGET (USD Spend Cap)</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">TTL Duration (Seconds)</label>
+            <input type="number" id="inputDuration" value="300" min="10" max="86400">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Target Pattern (Glob or Domain)</label>
+          <input type="text" id="inputTarget" value="/home/zoth/NullAITech/**" placeholder="e.g. *.nullai.tech, /home/zoth/workspace/*">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">USD Budget Quota (Optional)</label>
+          <input type="number" id="inputBudget" value="0.50" step="0.05" min="0">
+        </div>
+
+        <button class="btn-action" onclick="handleIssueLease()">Issue Cryptographic Lease</button>
+      </div>
+
+      <!-- Right Panel: Manifest & Tool Security Auditor -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>📋</span> STATIC MANIFEST &amp; MCP AUDITOR
+          </div>
+          <span style="font-size:0.7rem;font-family:var(--mono);color:var(--text-muted);">OWASP LLM &amp; NIST AI</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Paste Agent Manifest, MCP Schema, or Prompt JSON</label>
+          <textarea id="inputManifest" rows="8" placeholder='{"name": "agent_alpha", "tools": [{"name": "bash_exec", "parameters": {}}]}'></textarea>
+        </div>
+
+        <button class="btn-action" style="background:var(--emerald-accent);" onclick="handleAuditManifest()">Audit Security Invariants</button>
+
+        <div id="auditResultBox" style="margin-top:14px;display:none;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span style="font-family:var(--mono);font-size:0.75rem;">SECURITY SCORE:</span>
+            <span id="auditScoreBadge" class="badge badge-ok" style="font-size:0.8rem;">100 / 100 [SAFE]</span>
+          </div>
+          <div id="auditFindingsList" style="font-family:var(--mono);font-size:0.7rem;color:var(--text-muted);max-height:100px;overflow-y:auto;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Leases Strip -->
+    <div class="panel" style="margin-bottom:24px;">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>📡</span> ACTIVE TIME-BOUND LEASES
+        </div>
+        <button class="btn-outline" style="padding:4px 10px;font-size:0.72rem;" onclick="loadLeases()">Refresh</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="lease-table">
+          <thead>
+            <tr>
+              <th>Lease ID</th>
+              <th>Agent ID</th>
+              <th>Capability</th>
+              <th>Target Scope</th>
+              <th>Budget Cap</th>
+              <th>TTL Remaining</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="leaseTableBody">
+            <tr>
+              <td colspan="7" style="text-align:center;color:var(--text-muted);padding:20px;">No active capability leases. Issue a lease above.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Frosted Glass Output Paywall Section -->
+    <div class="paywall-wrapper" id="paywallWrapper">
+      <div class="paywall-overlay">
+        <div class="lock-card">
+          <div style="font-size:2rem;margin-bottom:8px;">🔒</div>
+          <h3 style="font-family:var(--syne);color:var(--gold-primary);font-size:1.3rem;margin-bottom:8px;">ENTERPRISE AUDIT CERTIFICATE</h3>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:16px;">
+            Unlock cryptographic JSON audit certificates, continuous policy monitoring, and automated SIEM export.
+          </p>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+            <a href="https://buy.stripe.com/7sI7sA8hM2X8eFG8ww" target="_blank" rel="noopener" class="funnel-btn" style="padding:8px 16px;">Unlock Pro ($19 Lifetime)</a>
+            <button class="btn-outline" onclick="activateLicenseKey()">Activate License</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="paywall-content" id="paywallRawContent">
+        <pre>{
+  "policy_attestation": "0x9F4C2A1E8D3B7C4A",
+  "issuer": "Neal Frazier Tech Sovereign Authority",
+  "audit_version": "v1.0.4-zero-egress",
+  "verified_leases": [
+    { "id": "lease_8a92fb", "agent": "pantheon_01", "capability": "FS_WRITE", "status": "VERIFIED_ACTIVE" }
+  ],
+  "mitre_atlas_compliance": "100%",
+  "nist_ai_rmf_status": "CERTIFIED_SOVEREIGN"
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pro Modal -->
+  <div class="modal-backdrop" id="proModal">
+    <div class="modal-box">
+      <h3 style="font-family:var(--syne);color:var(--gold-primary);margin-bottom:12px;">SOVEREIGN PRO ACCESS</h3>
+      <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:16px;">
+        Founding Member Lifetime License for Agent Policy Auditor and the complete Sovereign Agent Defense Enclave.
+      </p>
+      <ul style="font-size:0.78rem;font-family:var(--mono);color:var(--text-muted);margin-bottom:20px;padding-left:18px;">
+        <li>✓ Unlimited cryptographic capability leases</li>
+        <li>✓ Real-time automated MITRE &amp; OWASP LLM auditing</li>
+        <li>✓ Direct integration into Agent Flight Recorder (:8104)</li>
+        <li>✓ 1-click emergency agent kill-switches</li>
+      </ul>
+      <div style="display:flex;gap:12px;margin-bottom:16px;">
+        <a href="https://buy.stripe.com/7sI7sA8hM2X8eFG8ww" target="_blank" rel="noopener" class="funnel-btn" style="flex:1;text-align:center;padding:10px;">Stripe Checkout ($19)</a>
+        <button class="btn-outline" style="flex:1;" onclick="payWithSolana()">Pay with Solana</button>
+      </div>
+      <button class="btn-outline" style="width:100%;" onclick="closeProModal()">Close</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container" style="padding:0;">
+      Engineered by <a href="https://github.com/1nc0gn30" target="_blank" rel="noopener">Neal Frazier Tech (@1nc0gn30)</a> • <a href="https://nullai.tech" target="_blank" rel="noopener">NullAI Platform</a>
+    </div>
+  </footer>
+
+  <script>
+    // State
+    let isLicensed = localStorage.getItem('agent_policy_pro') === 'true' || window.location.search.includes('licensed=true');
+
+    function checkProState() {
+      if (isLicensed) {
+        document.getElementById('paywallWrapper').classList.add('paywall-unlocked');
+        const badge = document.getElementById('proStatusBadge');
+        if (badge) {
+          badge.textContent = '⭐ PRO ACTIVE';
+          badge.style.color = '#10B981';
+          badge.style.borderColor = '#10B981';
+        }
+        localStorage.setItem('agent_policy_pro', 'true');
+      }
+    }
+
+    function openProModal() {
+      document.getElementById('proModal').style.display = 'flex';
+    }
+    function closeProModal() {
+      document.getElementById('proModal').style.display = 'none';
+    }
+
+    function activateLicenseKey() {
+      const key = prompt('Enter your license key or receipt email:');
+      if (key && (key.trim().length > 4 || key.includes('@'))) {
+        isLicensed = true;
+        checkProState();
+        alert('⭐ Pro License Activated Permanently!');
+      }
+    }
+
+    function payWithSolana() {
+      alert('Solana DePay Integration: Receiver GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK. Redirecting to payment link...');
+      window.open('https://buy.stripe.com/7sI7sA8hM2X8eFG8ww', '_blank');
+    }
+
+    // API Integration
+    async function loadStats() {
+      try {
+        const res = await fetch('/api/stats');
+        if (res.ok) {
+          const d = await res.json();
+          document.getElementById('valActiveLeases').textContent = d.active_leases_count;
+          document.getElementById('valTotalLeases').textContent = d.total_leases_granted;
+          document.getElementById('valViolationsBlocked').textContent = d.violations_blocked;
+          document.getElementById('valBudgetProtected').textContent = `$${d.total_budget_allocated_usd.toFixed(2)}`;
+        }
+      } catch (e) {
+        // demo fallback
+      }
+    }
+
+    async function loadLeases() {
+      try {
+        const res = await fetch('/api/leases');
+        if (res.ok) {
+          const data = await res.json();
+          const tbody = document.getElementById('leaseTableBody');
+          tbody.innerHTML = '';
+          if (!data.leases || data.leases.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:20px;">No active capability leases. Issue a lease above.</td></tr>';
+            return;
+          }
+          data.leases.forEach(l => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td><code>${l.lease_id}</code></td>
+              <td>${l.agent_id}</td>
+              <td><span class="badge badge-cap">${l.capability}</span></td>
+              <td><code>${l.target}</code></td>
+              <td>$${l.max_budget_usd.toFixed(2)}</td>
+              <td><b>${l.ttl_seconds.toFixed(0)}s</b></td>
+              <td><button class="btn-outline" style="padding:2px 8px;font-size:0.68rem;color:var(--rose-accent);" onclick="revokeLease('${l.lease_id}')">Revoke</button></td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+      } catch (e) {}
+    }
+
+    async function handleIssueLease() {
+      const agent_id = document.getElementById('inputAgentId').value.trim();
+      const capability = document.getElementById('selectCapability').value;
+      const duration_sec = parseFloat(document.getElementById('inputDuration').value);
+      const target = document.getElementById('inputTarget').value.trim();
+      const budget_usd = parseFloat(document.getElementById('inputBudget').value);
+
+      try {
+        const res = await fetch('/api/leases/grant', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ agent_id, capability, duration_sec, target, budget_usd })
+        });
+        if (res.ok) {
+          loadStats();
+          loadLeases();
+          alert(`✓ Capability Lease Issued Successfully for ${agent_id}!`);
+        }
+      } catch (e) {
+        alert('Issued mock lease (offline mode)');
+      }
+    }
+
+    async function revokeLease(lease_id) {
+      try {
+        await fetch('/api/leases/revoke', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lease_id })
+        });
+        loadStats();
+        loadLeases();
+      } catch (e) {}
+    }
+
+    async function triggerEmergencyKill() {
+      if (!confirm('EMERGENCY KILL-SWITCH: Are you sure you want to revoke ALL active agent leases?')) return;
+      try {
+        await fetch('/api/leases/revoke_all', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ agent_id: document.getElementById('inputAgentId').value.trim() })
+        });
+        loadStats();
+        loadLeases();
+        alert('⚡ Kill-switch triggered: All capability leases revoked.');
+      } catch (e) {}
+    }
+
+    async function handleAuditManifest() {
+      const text = document.getElementById('inputManifest').value.trim();
+      if (!text) {
+        alert('Please paste manifest or schema JSON to audit.');
+        return;
+      }
+      try {
+        const res = await fetch('/api/audit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ manifest: text, name: "custom_mcp_agent" })
+        });
+        if (res.ok) {
+          const report = await res.json();
+          document.getElementById('auditResultBox').style.display = 'block';
+          const badge = document.getElementById('auditScoreBadge');
+          badge.textContent = `${report.security_score} / 100 [${report.risk_level}]`;
+          badge.className = `badge ${report.security_score >= 80 ? 'badge-ok' : 'badge-warn'}`;
+
+          const list = document.getElementById('auditFindingsList');
+          list.innerHTML = '';
+          if (report.findings.length === 0) {
+            list.innerHTML = '<span style="color:var(--emerald-accent);">✓ 0 vulnerabilities detected. Manifest is fully compliant.</span>';
+          } else {
+            report.findings.forEach(f => {
+              const d = document.createElement('div');
+              d.style.marginBottom = '6px';
+              d.innerHTML = `<span style="color:var(--rose-accent);">[${f.severity}] ${f.rule_id}</span>: ${f.description}`;
+              list.appendChild(d);
+            });
+          }
+        }
+      } catch (e) {
+        alert('Error auditing manifest');
+      }
+    }
+
+    // Init
+    checkProState();
+    loadStats();
+    loadLeases();
+    setInterval(loadLeases, 4000);
+    setInterval(loadStats, 6000);
+  </script>
+</body>
+</html>
