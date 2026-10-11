@@ -616,14 +616,39 @@
       text-decoration: underline;
     }
 
+    /* Non-blocking Toast Container */
+    #toastContainer {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .toast-msg {
+      background: rgba(10, 11, 15, 0.95);
+      border: 1px solid var(--gold-primary);
+      color: var(--text-main);
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      pointer-events: auto;
+    }
+
     /* Triple-viewport adjustments */
     @media (max-width: 600px) {
       .brand-title {
-        font-size: 1.25rem;
+        font-size: 1.15rem;
+        flex-wrap: wrap;
       }
       .funnel-banner {
-        font-size: 0.78rem;
+        font-size: 0.76rem;
         gap: 8px;
+        padding: 8px 10px;
       }
       .panel {
         padding: 14px;
@@ -634,13 +659,29 @@
       .modal-box {
         padding: 20px;
       }
+      .header-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+    }
+    @media (max-width: 480px) {
+      .container {
+        padding: 14px 10px;
+      }
+      .brand-title {
+        font-size: 1.05rem;
+      }
+      .btn-outline, .btn-badge-free {
+        padding: 6px 10px;
+        font-size: 0.74rem;
+      }
     }
   </style>
 </head>
 <body>
 
   <!-- 1. Above-The-Fold Sales Funnel Banner -->
-  <div class="funnel-banner" id="funnelBanner">
+  <div class="funnel-banner" id="salesBanner" data-alias="funnelBanner">
     <span class="funnel-tag">FOUNDING PASS</span>
     <span>⚡ Autonomous Agent Policy Broker &amp; Capability Leaser</span>
     <span class="funnel-price"><del>$79</del> $19 Lifetime</span>
@@ -657,12 +698,13 @@
         <div class="brand-title">
           <span>AGENT POLICY AUDITOR</span>
           <span class="port-badge" id="portBadge">● SOVEREIGN PORT :8106</span>
+          <span class="tag-badge" style="background:rgba(212,175,55,0.15);border:1px solid var(--gold-primary);color:var(--gold-primary);font-size:0.68rem;padding:2px 8px;border-radius:999px;font-family:var(--mono);font-weight:700;">v2.5 SOVEREIGN</span>
         </div>
       </div>
       <div class="header-actions">
         <button class="btn-outline" id="btnEmergencyKill" onclick="triggerEmergencyKill()">⚡ Kill-Switch All</button>
-        <button class="btn-outline" id="btnHeaderKey" onclick="promptLicenseKey()">🔑 Enter Key</button>
-        <button class="btn-badge-free" id="pro-badge" data-alt-id="proStatusBadge" onclick="openProModal()">FREE TIER</button>
+        <button class="btn-outline" id="btnHeaderKey" data-alias="btnActivateKey" onclick="promptLicenseKey()">🔑 Enter Key</button>
+        <button class="btn-badge-free" id="licenseBadge" data-alias="proStatusBadge" data-alt-id="proStatusBadge" onclick="openProModal()">⚡ FREE TIER</button>
       </div>
     </header>
 
@@ -841,7 +883,7 @@
   </div>
 
   <!-- Pro Modal -->
-  <div class="modal-backdrop" id="paywallModal" data-alt-id="proModal">
+  <div class="modal-backdrop" id="paywallModal" data-alias="licenseModal" data-alt-id="proModal">
     <div class="modal-box">
       <h3 style="font-family:var(--syne);color:var(--gold-primary);margin-bottom:10px;font-size:1.4rem;">SOVEREIGN PRO ACCESS</h3>
       <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:16px;">
@@ -861,10 +903,10 @@
       </div>
 
       <div style="margin-top:14px;margin-bottom:16px;padding-top:14px;border-top:1px solid var(--border-subtle);">
-        <label class="form-label" for="modalLicenseInput">Already have a license key or receipt email?</label>
+        <label class="form-label" for="licenseKeyInput">Already have a license key or receipt email?</label>
         <div style="display:flex;gap:8px;">
           <input type="text" id="licenseKeyInput" data-alt-id="modalLicenseInput" placeholder="Enter key (e.g. POLICY-PRO-2026)">
-          <button class="btn-outline" id="btn-modal-activate" style="white-space:nowrap;" onclick="activateFromModal()">Activate</button>
+          <button class="btn-outline" id="btnActivateKey" data-alias="btnActivateKey" style="white-space:nowrap;" onclick="activateFromModal()">Activate</button>
         </div>
       </div>
 
@@ -880,9 +922,33 @@
   </footer>
 
   <script>
+    // Toast notification helper
+    function showToast(msg) {
+      console.log('[AUDITOR]', msg);
+      let container = document.getElementById('toastContainer');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        document.body.appendChild(container);
+      }
+      const t = document.createElement('div');
+      t.className = 'toast-msg';
+      t.textContent = msg;
+      container.appendChild(t);
+      setTimeout(() => {
+        t.style.opacity = '0';
+        t.style.transition = 'opacity 0.4s ease';
+        setTimeout(() => t.remove(), 400);
+      }, 3500);
+    }
+
     // State management
     const IS_DAEMON_PORT = window.location.port === "8106";
-    let isLicensed = localStorage.getItem('agent_policy_pro') === 'true' || window.location.search.includes('licensed=true');
+    let isLicensed = localStorage.getItem('agent_policy_pro') === 'true' ||
+                     localStorage.getItem('zoth_policy_licensed') === 'true' ||
+                     localStorage.getItem('pro_licensed') === 'true' ||
+                     window.location.search.includes('licensed=true') ||
+                     window.location.search.includes('session_id=');
 
     // Rich default in-memory state for client-side execution & static Netlify fallback
     let statsState = {
@@ -920,24 +986,47 @@
     ];
 
     function checkProState() {
-      const badge = document.getElementById('pro-badge') || document.getElementById('proStatusBadge');
+      const badge = document.getElementById('licenseBadge') || document.getElementById('pro-badge') || document.getElementById('proStatusBadge');
       const paywallWrapper = document.getElementById('paywallWrapper');
+      const salesBanner = document.getElementById('salesBanner') || document.getElementById('funnelBanner');
+      const paywallOverlay = document.getElementById('paywall-overlay');
 
       if (isLicensed) {
         if (paywallWrapper) {
           paywallWrapper.classList.add('paywall-unlocked');
+        }
+        if (paywallOverlay) {
+          paywallOverlay.style.display = 'none';
+        }
+        if (salesBanner) {
+          salesBanner.style.display = 'none';
         }
         if (badge) {
           badge.textContent = '⭐ PRO ACTIVE';
           badge.className = 'btn-badge-free badge-pro-active';
         }
         localStorage.setItem('agent_policy_pro', 'true');
+        localStorage.setItem('zoth_policy_licensed', 'true');
+        localStorage.setItem('pro_licensed', 'true');
+
+        if (window.location.search.includes('licensed=true') || window.location.search.includes('session_id=')) {
+          try {
+            const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+            window.history.replaceState({ path: cleanUrl }, document.title, cleanUrl);
+          } catch (e) {}
+        }
       } else {
         if (paywallWrapper) {
           paywallWrapper.classList.remove('paywall-unlocked');
         }
+        if (paywallOverlay) {
+          paywallOverlay.style.display = 'flex';
+        }
+        if (salesBanner) {
+          salesBanner.style.display = 'flex';
+        }
         if (badge) {
-          badge.textContent = 'FREE TIER';
+          badge.textContent = '⚡ FREE TIER';
           badge.className = 'btn-badge-free';
         }
       }
@@ -954,32 +1043,34 @@
     }
 
     function promptLicenseKey() {
-      const key = prompt('Enter your license key or receipt email (or use demo key POLICY-PRO-2026):');
-      if (key) {
-        activateLicense(key);
-      }
+      openProModal();
     }
 
     function activateFromModal() {
-      const input = document.getElementById('modalLicenseInput') || document.getElementById('licenseKeyInput');
+      const input = document.getElementById('licenseKeyInput') || document.getElementById('modalLicenseInput');
       if (input && input.value.trim()) {
         activateLicense(input.value.trim());
       } else {
-        alert('Please enter a valid license key.');
+        showToast('Please enter a valid license key.');
       }
     }
 
     function activateLicense(key) {
       const cleanKey = (key || '').trim();
-      if (cleanKey.length >= 4 || cleanKey.includes('@') || cleanKey.toUpperCase() === 'POLICY-PRO-2026') {
+      if (cleanKey.length >= 4 || cleanKey.includes('@') || cleanKey.toUpperCase() === 'POLICY-PRO-2026' || cleanKey.toUpperCase() === 'SOVEREIGN-PRO-2026') {
         isLicensed = true;
         checkProState();
         closeProModal();
-        alert('⭐ Sovereign Pro License Activated Permanently!');
+        showToast('⭐ Sovereign Pro License Activated Permanently!');
       } else {
-        alert('Invalid key format. Please enter a valid license key or receipt email.');
+        showToast('Invalid key format. Please enter a valid license key or receipt email.');
       }
     }
+
+    window.activateLicenseKey = function(key) {
+      activateLicense(key);
+    };
+    window.openLicenseModal = openProModal;
 
     function initiateDePayCheckout() {
       if (window.DePayButtons && typeof window.DePayButtons.init === 'function') {
@@ -1004,9 +1095,9 @@
       const certData = document.getElementById('certPreTag').textContent;
       if (action === 'copy') {
         navigator.clipboard.writeText(certData).then(() => {
-          alert('✓ Cryptographic Attestation Certificate JSON copied to clipboard!');
+          showToast('✓ Cryptographic Attestation Certificate JSON copied to clipboard!');
         }).catch(() => {
-          alert('Attestation JSON ready for export.');
+          showToast('Attestation JSON ready for export.');
         });
       } else if (action === 'export') {
         const blob = new Blob([certData], { type: 'application/json' });
@@ -1016,8 +1107,9 @@
         a.download = `agent-policy-certificate-${Date.now()}.json`;
         a.click();
         URL.revokeObjectURL(url);
+        showToast('✓ Signed Policy Certificate JSON downloaded!');
       } else if (action === 'siem') {
-        const siemPayload = `CEF:0|NullAI|AgentPolicyAuditor|1.0.4|POL-100|Attestation Verified|3|src=127.0.0.1 agent=pantheon_01 leases=${leasesList.length}`;
+        const siemPayload = `CEF:0|NullAI|AgentPolicyAuditor|2.5.0|POL-100|Attestation Verified|3|src=127.0.0.1 agent=pantheon_01 leases=${leasesList.length}`;
         const blob = new Blob([siemPayload], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -1025,6 +1117,7 @@
         a.download = `siem-audit-stream-${Date.now()}.log`;
         a.click();
         URL.revokeObjectURL(url);
+        showToast('✓ SIEM / CEF audit log stream downloaded!');
       }
     }
 
@@ -1185,14 +1278,13 @@
     }
 
     async function triggerEmergencyKill() {
-      if (!confirm('EMERGENCY KILL-SWITCH: Revoke ALL active agent capability leases immediately?')) return;
       leasesList = [];
       statsState.active_leases_count = 0;
       statsState.violations_blocked += 1;
       renderStats();
       renderLeasesTable();
       updateCertJson();
-      alert('⚡ Kill-switch triggered: All active capability leases revoked with zero residual egress.');
+      showToast('⚡ Kill-switch triggered: All active capability leases revoked with zero residual egress.');
 
       if (IS_DAEMON_PORT) {
         try {
@@ -1245,7 +1337,7 @@
     async function handleAuditManifest() {
       const text = document.getElementById('inputManifest').value.trim();
       if (!text) {
-        alert('Please paste a manifest or schema JSON to audit, or select a preset above.');
+        showToast('Please paste a manifest or schema JSON to audit, or select a preset above.');
         return;
       }
 
