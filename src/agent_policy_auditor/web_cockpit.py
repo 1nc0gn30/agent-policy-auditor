@@ -201,7 +201,7 @@ class CockpitHandler(BaseHTTPRequestHandler):
             pass
 
 
-def serve(port: int = 8106, host: str = "0.0.0.0") -> None:
+def serve(port: int = 8106, host: str = "127.0.0.1") -> None:
     server = HTTPServer((host, port), CockpitHandler)
     print(f"⚡ [AGENT POLICY AUDITOR] Cockpit & Lease Broker running on http://127.0.0.1:{port}")
     try:

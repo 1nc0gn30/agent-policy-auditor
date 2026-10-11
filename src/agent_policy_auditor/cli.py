@@ -18,6 +18,24 @@ from agent_policy_auditor.broker import PolicyBroker
 from agent_policy_auditor.web_cockpit import serve
 
 
+def _default_bind_host() -> str:
+    """Bind address: localhost unless explicitly opted in via $ZOTH_BIND_HOST or
+    $HOST (IP literal only; zsh sets HOST to the hostname) or --host."""
+    import ipaddress, os
+    for var in ("ZOTH_BIND_HOST", "HOST"):
+        val = os.environ.get(var, "").strip()
+        if val == "localhost":
+            return "127.0.0.1"
+        if val:
+            try:
+                ipaddress.ip_address(val)
+                return val
+            except ValueError:
+                pass
+    return "127.0.0.1"
+
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Agent Policy Auditor & Capability Leaser (Port 8106)"
@@ -27,7 +45,7 @@ def main() -> None:
     # Serve Command
     serve_parser = subparsers.add_parser("serve", help="Launch the Cockpit REST API and web UI")
     serve_parser.add_argument("--port", type=int, default=8106, help="Port to bind (default: 8106)")
-    serve_parser.add_argument("--host", type=str, default="0.0.0.0", help="Host interface (default: 0.0.0.0)")
+    serve_parser.add_argument("--host", type=str, default=_default_bind_host(), help="Host interface (default: 127.0.0.1 or $ZOTH_BIND_HOST; use 0.0.0.0 only on trusted networks)")
 
     # Status Command
     subparsers.add_parser("status", help="Display active leases and broker telemetry")
