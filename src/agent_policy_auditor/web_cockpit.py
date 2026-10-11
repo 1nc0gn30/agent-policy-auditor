@@ -19,6 +19,17 @@ from agent_policy_auditor.auditor import ManifestAuditor
 from agent_policy_auditor.broker import PolicyBroker
 
 
+def _safe_rel(raw: str) -> str:
+    """Request path -> safe relative path inside a static dir; '' (index) if it
+    tries to climb out with '..' or is absolute. Raw request paths are not normalised."""
+    from urllib.parse import unquote
+    rel = unquote(str(raw or "")).replace("\\", "/").lstrip("/")
+    parts = [p for p in rel.split("/") if p not in ("", ".")]
+    if any(p == ".." for p in parts) or ":" in (parts[0] if parts else ""):
+        return ""
+    return "/".join(parts)
+
+
 def _is_local_origin(origin) -> bool:
     """Browser Origin check. No Origin header = non-browser client (CLI/agent): allowed.
     Otherwise only http(s)://localhost / 127.0.0.1 / [::1] pages may call this API, so a
@@ -87,12 +98,12 @@ class CockpitHandler(BaseHTTPRequestHandler):
             return
 
         # Serve Static Files
-        clean_path = path.lstrip("/")
+        clean_path = _safe_rel(path)
         if not clean_path:
             clean_path = "index.html"
         target_file = (STATIC_DIR / clean_path).resolve()
 
-        if not str(target_file).startswith(str(STATIC_DIR)):
+        if not target_file.is_relative_to(STATIC_DIR.resolve()):
             self.send_error(403, "Forbidden")
             return
 
