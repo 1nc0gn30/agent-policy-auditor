@@ -694,7 +694,7 @@
     <!-- Header -->
     <header>
       <div class="brand-group">
-        <img src="/assets/icon.png" alt="Agent Policy Auditor Sovereign Seal" class="header-logo">
+        <img src="assets/icon.png" alt="Agent Policy Auditor Sovereign Seal" class="header-logo">
         <div class="brand-title">
           <span>AGENT POLICY AUDITOR</span>
           <span class="port-badge" id="portBadge">● SOVEREIGN PORT :8106</span>
@@ -703,7 +703,7 @@
       </div>
       <div class="header-actions">
         <button class="btn-outline" id="btnEmergencyKill" onclick="triggerEmergencyKill()">⚡ Kill-Switch All</button>
-        <button class="btn-outline" id="btnHeaderKey" data-alias="btnActivateKey" onclick="promptLicenseKey()">🔑 Enter Key</button>
+        <button class="btn-outline" id="btnHeaderKey" data-alias="btnActivateKey" onclick="promptLicenseKey()">✦ Enter Key</button>
         <button class="btn-badge-free" id="licenseBadge" data-alias="proStatusBadge" data-alt-id="proStatusBadge" onclick="openProModal()">⚡ FREE TIER</button>
       </div>
     </header>
@@ -734,7 +734,7 @@
       <div class="panel">
         <div class="panel-header">
           <div class="panel-title">
-            <span>🔑</span> ISSUE CAPABILITY LEASE
+            <span>✦</span> ISSUE CAPABILITY LEASE
           </div>
           <span style="font-size:0.7rem;font-family:var(--mono);color:var(--text-muted);">HMAC-SHA256 Signed</span>
         </div>
@@ -779,15 +779,15 @@
       <div class="panel">
         <div class="panel-header">
           <div class="panel-title">
-            <span>📋</span> STATIC MANIFEST &amp; MCP AUDITOR
+            <span>✦</span> STATIC MANIFEST &amp; MCP AUDITOR
           </div>
           <span style="font-size:0.7rem;font-family:var(--mono);color:var(--text-muted);">OWASP LLM &amp; NIST AI</span>
         </div>
 
         <div class="preset-chips">
           <span class="chip" onclick="loadSampleManifest('risky')">⚠️ Risky MCP Schema</span>
-          <span class="chip" onclick="loadSampleManifest('safe')">🛡️ Sovereign Safe Manifest</span>
-          <span class="chip" onclick="loadSampleManifest('injection')">🛑 Prompt Injection Test</span>
+          <span class="chip" onclick="loadSampleManifest('safe')">❖ Sovereign Safe Manifest</span>
+          <span class="chip" onclick="loadSampleManifest('injection')">✦ Prompt Injection Test</span>
         </div>
 
         <div class="form-group">
@@ -811,7 +811,7 @@
     <div class="panel" style="margin-bottom:24px;">
       <div class="panel-header">
         <div class="panel-title">
-          <span>📡</span> ACTIVE TIME-BOUND LEASES
+          <span>✦</span> ACTIVE TIME-BOUND LEASES
         </div>
         <button class="btn-outline" style="padding:4px 10px;font-size:0.72rem;" onclick="refreshLeases()">Refresh</button>
       </div>
@@ -839,19 +839,19 @@
     <div class="panel" style="margin-bottom:24px;">
       <div class="panel-header">
         <div class="panel-title">
-          <span>🔐</span> CRYPTOGRAPHIC AUDIT CERTIFICATE &amp; POLICY ENCLAVE
+          <span>★</span> CRYPTOGRAPHIC AUDIT CERTIFICATE &amp; POLICY ENCLAVE
         </div>
         <div class="interceptor-strip" style="margin:0;">
-          <button class="btn-action-interceptor" id="btnCopyCert" onclick="handleActionInterceptor('copy')">📋 Copy Attestation JSON</button>
-          <button class="btn-action-interceptor" id="btnExportPolicy" onclick="handleActionInterceptor('export')">💾 Export Signed Policy (.json)</button>
-          <button class="btn-action-interceptor" id="btnDownloadSiem" onclick="handleActionInterceptor('siem')">🛡️ Download SIEM / CEF Log</button>
+          <button class="btn-action-interceptor" id="btnCopyCert" onclick="handleActionInterceptor('copy')">✦ Copy Attestation JSON</button>
+          <button class="btn-action-interceptor" id="btnExportPolicy" onclick="handleActionInterceptor('export')">↓ Export Signed Policy (.json)</button>
+          <button class="btn-action-interceptor" id="btnDownloadSiem" onclick="handleActionInterceptor('siem')">❖ Download SIEM / CEF Log</button>
         </div>
       </div>
 
       <div class="paywall-wrapper" id="paywallWrapper">
         <div class="paywall-overlay" id="paywall-overlay">
           <div class="lock-card">
-            <div style="font-size:2rem;margin-bottom:8px;">🔒</div>
+            <div style="font-size:2rem;margin-bottom:8px;">★</div>
             <h3 style="font-family:var(--syne);color:var(--gold-primary);font-size:1.3rem;margin-bottom:8px;">PRO OUTPUT LOCKED — ENTERPRISE AUDIT CERTIFICATE</h3>
             <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:16px;">
               Unlock cryptographic JSON audit certificates, continuous policy monitoring, and automated SIEM export.
