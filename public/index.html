@@ -36,8 +36,6 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 
   <!-- DePay Web3 Payments Widget v13 -->
-  <script defer src="https://integrate.depay.com/widgets/v13.js"></script>
-
   <!-- Schema.org JSON-LD Graph for Frontier Crawlers & SGE -->
   <script type="application/ld+json">
   {
@@ -52,10 +50,10 @@
         "description": "Autonomous zero-dependency capability leasing broker and manifest security auditor for AI agents with time-bound HMAC leases, path glob permissions, and OWASP LLM compliance scoring.",
         "offers": {
           "@type": "Offer",
-          "price": "19.00",
+          "price": "0",
           "priceCurrency": "USD",
           "availability": "https://schema.org/InStock",
-          "url": "https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L"
+          "url": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
         },
         "author": {
           "@type": "Person",
@@ -92,7 +90,7 @@
             "name": "What payment rails are supported for founding licenses?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Founding member lifetime licenses ($19 vs $79 regular) are accepted via Stripe Payment Links (Credit Cards, Apple Pay, Google Pay) and the DePay Solana Web3 payment widget."
+              "text": "Founding member lifetime licenses (Free (100% Open Access) vs Free (100% Open Access) regular) are accepted via Stripe Payment Links (Credit Cards, Apple Pay, Google Pay) and the DePay Solana Web3 payment widget."
             }
           }
         ]
@@ -126,6 +124,11 @@
       padding: 0;
     }
 
+    html, body {
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+
     body {
       background-color: var(--bg-dark);
       color: var(--text-main);
@@ -133,9 +136,7 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      overflow-x: hidden;
       line-height: 1.5;
-      max-width: 100vw;
     }
 
     /* 1. High-Converting Sales Funnel Top Banner */
@@ -541,7 +542,7 @@
       color: var(--text-muted);
       max-height: 280px;
       overflow-y: auto;
-      filter: blur(6px);
+      filter: none;
       user-select: none;
       transition: filter 0.3s ease;
     }
@@ -553,7 +554,7 @@
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(8, 8, 11, 0.78);
-      backdrop-filter: blur(8px);
+      backdrop-filter: none;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -677,18 +678,49 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="wave.css">
+  <link rel="stylesheet" href="wave-states.css">
+
+  <!-- Zoth 100% Open-Access & Buy Us a Coffee Invariant -->
+  <script id="zoth-open-access-init">
+    (function() {
+      try {
+        var keys = ['agent_audiocipher_pro', 'agent_cyber_turtle_pro', 'agent_datamosh_pro', 'agent_nexus3d_pro', 'agent_policy_pro', 'audiocipher_license', 'audiocipher_pro_licensed', 'badge3d_pro_licensed', 'certpath_pro_key', 'certpath_pro_licensed', 'cron_rhythm_pro_key', 'cron_rhythm_pro_licensed', 'cwv-speed-engine_pro_licensed', 'cwv_pro_licensed', 'cyber_turtle_pro_licensed', 'datamosh_pro_licensed', 'deepsearch-research-agent_pro_licensed', 'deepsearch_pro_licensed', 'entropy_studio_licensed', 'envguard-secrets-vault_pro_licensed', 'envguard_pro_license', 'etsy_connector_pro', 'jwt_guard_licensed', 'mdg_pro_licensed', 'neuro_pro_licensed', 'nexus3d_pro_licensed', 'omnipost_pro_key', 'omnipost_pro_licensed', 'osint_pro_licensed', 'payload-entropy-studio_pro_licensed', 'polyglot_pro_licensed', 'pro_licensed', 'promptmaster_pro_licensed', 'promptmaster_pro_active', 'robots-txt-auditor_pro_licensed', 'robots_pro_licensed', 'schema_illustrator_pro_licensed', 'sovereign_pro_licensed', 'subsweep-lead-scanner_pro_licensed', 'subsweep_licensed', 'turtle_pro_licensed', 'ufo_sacred_licensed', 'vector-search-engine_pro_licensed', 'vector_studio_pro_licensed', 'web-security-guard_pro_licensed', 'web_security_guard_licensed', 'yourdigitalspace_pro', 'zela_guide_pro_licensed', 'zoth_ascii_magic_pro', 'zoth_audiocipher_licensed', 'zoth_badge3d_licensed', 'zoth_cyber_turtle_licensed', 'zoth_datamosh_licensed', 'zoth_etsy_licensed', 'zoth_nexus3d_licensed', 'zoth_osint_licensed', 'zoth_policy_licensed', 'zoth_sacred_licensed', 'zoth_ufo_licensed'];
+        for (var i = 0; i < keys.length; i++) {
+          localStorage.setItem(keys[i], 'true');
+        }
+        localStorage.setItem('pm_license_v2', JSON.stringify({ method: 'open_access', ref: 'free_forever', at: '2026-01-01T00:00:00Z' }));
+        window.isPro = true;
+        window.isProLicensed = true;
+      } catch (e) {}
+    })();
+  </script>
+  <style id="zoth-open-access-override">
+    .paywall-overlay, .output-paywall-overlay, #outputPaywallOverlay, #schemaPaywallOverlay,
+    #transformerPaywallOverlay, #proPaywallModal, #licenseModal, #salesBanner, #founding-offer-banner,
+    #funnelHeroBanner, [data-alias="paywallOverlay"], [data-alias="founding-offer-banner"] {
+      display: none !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+    .paywall-wrap #outputPreview, .paywall-wrap #reportContentArea, .paywall-content,
+    .paywall-content.locked, .paywall-wrap.is-locked #outputPreview, .paywall-wrap.locked #outputPreview {
+      filter: none !important;
+      -webkit-filter: none !important;
+      user-select: auto !important;
+      pointer-events: auto !important;
+    }
+  </style>
+
 </head>
 <body>
 
-  <!-- 1. Above-The-Fold Sales Funnel Banner -->
-  <div class="funnel-banner" id="salesBanner" data-alias="funnelBanner">
-    <span class="funnel-tag">FOUNDING PASS</span>
-    <span>⚡ Autonomous Agent Policy Broker &amp; Capability Leaser</span>
-    <span class="funnel-price"><del>$79</del> $19 Lifetime</span>
-    <a href="https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L" target="_blank" rel="noopener" class="funnel-btn funnel-btn-stripe" id="bannerStripeBtn">Instant Stripe Checkout</a>
-    <button class="funnel-btn funnel-btn-solana btn-depay-trigger" id="btn-depay-solana" onclick="initiateDePayCheckout()">Web3 Solana Rail ($19)</button>
-    <a href="javascript:void(0)" id="btn-open-license-modal" onclick="promptLicenseKey()" class="funnel-link">Have Key?</a>
-  </div>
+<div id="zoth-coffee-support-bar" style="background: linear-gradient(90deg, rgba(16,185,129,0.12), rgba(212,175,55,0.14)); border-bottom: 1px solid rgba(212,175,55,0.35); padding: 8px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; z-index: 9999;">
+  <span style="color: #10B981; font-weight: 800;">✦ 100% FREE &amp; OPEN ACCESS · ZERO PAYWALLS</span>
+  <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" style="background: #D4AF37; color: #08080B; padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">☕ Buy Us a Coffee (Stripe)</a>
+  <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" onclick="if(navigator.clipboard){navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');this.textContent='✓ Copied GG2eQb...dXoK!';}" style="background: rgba(20,241,149,0.15); color: #14F195; border: 1px solid rgba(20,241,149,0.45); padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">◎ Solana Tip (GG2e...dXoK)</a>
+</div>
+
 
   <div class="container">
     <!-- Header -->
@@ -703,8 +735,8 @@
       </div>
       <div class="header-actions">
         <button class="btn-outline" id="btnEmergencyKill" onclick="triggerEmergencyKill()">⚡ Kill-Switch All</button>
-        <button class="btn-outline" id="btnHeaderKey" data-alias="btnActivateKey" onclick="promptLicenseKey()">✦ Enter Key</button>
-        <button class="btn-badge-free" id="licenseBadge" data-alias="proStatusBadge" data-alt-id="proStatusBadge" onclick="openProModal()">⚡ FREE TIER</button>
+        <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" class="btn-outline" style="text-decoration: none;" id="btnHeaderCoffee">☕ Buy Us a Coffee</a>
+        <div class="btn-badge-free badge-pro-active" id="licenseBadge" data-alias="proStatusBadge" data-alt-id="proStatusBadge">✦ 100% FREE &amp; OPEN ACCESS</div>
       </div>
     </header>
 
@@ -779,9 +811,9 @@
       <div class="panel">
         <div class="panel-header">
           <div class="panel-title">
-            <span>✦</span> STATIC MANIFEST &amp; MCP AUDITOR
+            <span>✦</span> STATIC MANIFEST & MCP AUDITOR
           </div>
-          <span style="font-size:0.7rem;font-family:var(--mono);color:var(--text-muted);">OWASP LLM &amp; NIST AI</span>
+          <span style="font-size:0.7rem;font-family:var(--mono);color:var(--text-muted);">OWASP LLM & NIST AI</span>
         </div>
 
         <div class="preset-chips">
@@ -839,7 +871,7 @@
     <div class="panel" style="margin-bottom:24px;">
       <div class="panel-header">
         <div class="panel-title">
-          <span>★</span> CRYPTOGRAPHIC AUDIT CERTIFICATE &amp; POLICY ENCLAVE
+          <span>★</span> CRYPTOGRAPHIC AUDIT CERTIFICATE & POLICY ENCLAVE
         </div>
         <div class="interceptor-strip" style="margin:0;">
           <button class="btn-action-interceptor" id="btnCopyCert" onclick="handleActionInterceptor('copy')">✦ Copy Attestation JSON</button>
@@ -848,22 +880,7 @@
         </div>
       </div>
 
-      <div class="paywall-wrapper" id="paywallWrapper">
-        <div class="paywall-overlay" id="paywall-overlay">
-          <div class="lock-card">
-            <div style="font-size:2rem;margin-bottom:8px;">★</div>
-            <h3 style="font-family:var(--syne);color:var(--gold-primary);font-size:1.3rem;margin-bottom:8px;">PRO OUTPUT LOCKED — ENTERPRISE AUDIT CERTIFICATE</h3>
-            <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:16px;">
-              Unlock cryptographic JSON audit certificates, continuous policy monitoring, and automated SIEM export.
-            </p>
-            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-              <a href="https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L" target="_blank" rel="noopener" class="funnel-btn funnel-btn-stripe" style="padding:8px 16px;">Unlock Pro ($19 Lifetime)</a>
-              <button class="funnel-btn funnel-btn-solana btn-depay-trigger" onclick="initiateDePayCheckout()">Solana Web3 ($19)</button>
-              <button class="btn-outline" onclick="promptLicenseKey()">Activate License</button>
-            </div>
-          </div>
-        </div>
-
+      <div class="paywall-wrapper paywall-unlocked" id="paywallWrapper">
         <div class="paywall-content" id="paywallRawContent">
           <pre id="certPreTag">{
   "policy_attestation": "0x9F4C2A1E8D3B7C4A",
@@ -879,38 +896,6 @@
 }</pre>
         </div>
       </div>
-    </div>
-  </div>
-
-  <!-- Pro Modal -->
-  <div class="modal-backdrop" id="paywallModal" data-alias="licenseModal" data-alt-id="proModal">
-    <div class="modal-box">
-      <h3 style="font-family:var(--syne);color:var(--gold-primary);margin-bottom:10px;font-size:1.4rem;">SOVEREIGN PRO ACCESS</h3>
-      <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:16px;">
-        Founding Member Lifetime License for Agent Policy Auditor and the Sovereign Agent Defense Enclave.
-      </p>
-      <ul style="font-size:0.78rem;font-family:var(--mono);color:var(--text-muted);margin-bottom:20px;padding-left:18px;line-height:1.7;">
-        <li>✓ Unlimited cryptographic capability leases (FS, NET, SHELL, BUDGET)</li>
-        <li>✓ Real-time automated MITRE ATLAS &amp; OWASP LLM static auditing</li>
-        <li>✓ Export signed policy certificates &amp; continuous SIEM/CEF feeds</li>
-        <li>✓ Direct integration into Agent Flight Recorder (:8104) &amp; Budget Sentinel (:8110)</li>
-        <li>✓ 1-click emergency agent kill-switches with zero latency</li>
-        <li>✓ Lifetime updates with zero recurring monthly subscription fees</li>
-      </ul>
-      <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
-        <a href="https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L" target="_blank" rel="noopener" class="funnel-btn funnel-btn-stripe" style="flex:1;text-align:center;justify-content:center;padding:10px;">Stripe Checkout ($19)</a>
-        <button class="funnel-btn funnel-btn-solana btn-depay-trigger" style="flex:1;justify-content:center;" onclick="initiateDePayCheckout()">Pay with Solana</button>
-      </div>
-
-      <div style="margin-top:14px;margin-bottom:16px;padding-top:14px;border-top:1px solid var(--border-subtle);">
-        <label class="form-label" for="licenseKeyInput">Already have a license key or receipt email?</label>
-        <div style="display:flex;gap:8px;">
-          <input type="text" id="licenseKeyInput" data-alt-id="modalLicenseInput" placeholder="Enter key (e.g. POLICY-PRO-2026)">
-          <button class="btn-outline" id="btnActivateKey" data-alias="btnActivateKey" style="white-space:nowrap;" onclick="activateFromModal()">Activate</button>
-        </div>
-      </div>
-
-      <button class="btn-outline" style="width:100%;" onclick="closeProModal()">Close</button>
     </div>
   </div>
 
@@ -944,11 +929,7 @@
 
     // State management
     const IS_DAEMON_PORT = window.location.port === "8106";
-    let isLicensed = localStorage.getItem('agent_policy_pro') === 'true' ||
-                     localStorage.getItem('zoth_policy_licensed') === 'true' ||
-                     localStorage.getItem('pro_licensed') === 'true' ||
-                     window.location.search.includes('licensed=true') ||
-                     window.location.search.includes('session_id=');
+    let isLicensed = true;
 
     // Rich default in-memory state for client-side execution & static Netlify fallback
     let statsState = {
@@ -991,44 +972,18 @@
       const salesBanner = document.getElementById('salesBanner') || document.getElementById('funnelBanner');
       const paywallOverlay = document.getElementById('paywall-overlay');
 
-      if (isLicensed) {
-        if (paywallWrapper) {
-          paywallWrapper.classList.add('paywall-unlocked');
-        }
-        if (paywallOverlay) {
-          paywallOverlay.style.display = 'none';
-        }
-        if (salesBanner) {
-          salesBanner.style.display = 'none';
-        }
-        if (badge) {
-          badge.textContent = '⭐ PRO ACTIVE';
-          badge.className = 'btn-badge-free badge-pro-active';
-        }
-        localStorage.setItem('agent_policy_pro', 'true');
-        localStorage.setItem('zoth_policy_licensed', 'true');
-        localStorage.setItem('pro_licensed', 'true');
-
-        if (window.location.search.includes('licensed=true') || window.location.search.includes('session_id=')) {
-          try {
-            const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            window.history.replaceState({ path: cleanUrl }, document.title, cleanUrl);
-          } catch (e) {}
-        }
-      } else {
-        if (paywallWrapper) {
-          paywallWrapper.classList.remove('paywall-unlocked');
-        }
-        if (paywallOverlay) {
-          paywallOverlay.style.display = 'flex';
-        }
-        if (salesBanner) {
-          salesBanner.style.display = 'flex';
-        }
-        if (badge) {
-          badge.textContent = '⚡ FREE TIER';
-          badge.className = 'btn-badge-free';
-        }
+      if (paywallWrapper) {
+        paywallWrapper.classList.add('paywall-unlocked');
+      }
+      if (paywallOverlay) {
+        paywallOverlay.style.display = 'none';
+      }
+      if (salesBanner) {
+        salesBanner.style.display = 'none';
+      }
+      if (badge) {
+        badge.textContent = '✦ 100% FREE & OPEN ACCESS';
+        badge.className = 'btn-badge-free badge-pro-active';
       }
     }
 
@@ -1073,25 +1028,15 @@
     window.openLicenseModal = openProModal;
 
     function initiateDePayCheckout() {
-      if (window.DePayButtons && typeof window.DePayButtons.init === 'function') {
-        try {
-          window.DePayButtons.init({
-            integration: '428790dd-7ad1-407c-8ecf-c048c77a4cb8',
-            receiver: 'GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK',
-            amount: 19,
-            currency: 'USD'
-          });
-          return;
-        } catch (err) {}
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');
+        showToast('✓ Solana Tip Address copied: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');
+      } else {
+        window.open('solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK', '_blank');
       }
-      window.open('https://depay.com/pay?integration=428790dd-7ad1-407c-8ecf-c048c77a4cb8&receiver=GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK&amount=19', '_blank');
     }
 
     function handleActionInterceptor(action) {
-      if (!isLicensed) {
-        openProModal();
-        return;
-      }
       const certData = document.getElementById('certPreTag').textContent;
       if (action === 'copy') {
         navigator.clipboard.writeText(certData).then(() => {
@@ -1385,7 +1330,7 @@
 
       list.innerHTML = '';
       if (findings.length === 0) {
-        list.innerHTML = '<div style="color:var(--emerald-accent);padding:4px 0;">✓ 0 vulnerabilities detected. Manifest is fully compliant with NIST AI RMF &amp; OWASP LLM.</div>';
+        list.innerHTML = '<div style="color:var(--emerald-accent);padding:4px 0;">✓ 0 vulnerabilities detected. Manifest is fully compliant with NIST AI RMF & OWASP LLM.</div>';
       } else {
         findings.forEach(f => {
           const item = document.createElement('div');

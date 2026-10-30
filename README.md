@@ -36,8 +36,8 @@ Enforces time-bound, cryptographically signed capability leases (HMAC-SHA256) ac
     - Unfiltered network egress.
 - **Mesh Telemetry Pipeline**:
   - Forwards violations and lease grants to **Agent Flight Recorder (:8104)** and **Neuro-Memory Daemon (:8094)**.
-- **Dual Monetization Rails**:
-  - $19 Founding Member lifetime access via Stripe and DePay Solana Web3 payment rails.
+- **100% Free & Open-Access Standard**:
+  - Fully unlocked by default with zero paywalls. Optional community tips via Stripe and Solana.
 
 ---
 
@@ -75,13 +75,13 @@ pytest -v
 
 ---
 
-## 💼 Sovereign SaaS Licensing
+## ☕ 100% Free & Open-Access (Zero Paywalls)
 
-- **Founding Member License**: $19 lifetime access (regular $79).
-- **Payment Rails**:
-  - Stripe: [Instant Stripe Checkout](https://buy.stripe.com/7sI7sA8hM2X8eFG8ww)
-  - Solana DePay: Receiver `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`
-- **Instant Activation**: Pass `?licensed=true` in the browser or enter your receipt key in the Pro modal.
+Agent Policy Auditor is **100% free, open-access, and unlocked by default**. All capability leasers, static security rule auditors, and cryptographic certificate exporters are fully accessible with zero paywalls.
+
+If you find this tool valuable, optional community support is welcome via:
+- **☕ Buy Us a Coffee (Stripe)**: [https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)
+- **◎ Solana Tip Address**: `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK` (`solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`)
 
 ---
 

@@ -1,0 +1,10 @@
+{
+  "status": "ONLINE",
+  "service": "agent-policy-auditor",
+  "version": "2.5.0",
+  "port": 8106,
+  "mode": "OWASP_LLM_TOP10_AUDITOR",
+  "manifests_audited": 69,
+  "capabilities_leased": 21,
+  "policy_drift": 0
+}

@@ -1,0 +1,122 @@
+/* ==========================================================================
+   Agent Policy Auditor — Wave Surface Refinements
+   Theme: Precision Cryptographic Security Terminal
+   ========================================================================== */
+
+/* 1. Clearer Type Hierarchy & Metrics */
+.form-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #94A3B8;
+  margin-bottom: 8px;
+}
+
+.panel-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.kpi-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #94A3B8;
+}
+
+.kpi-val {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  letter-spacing: -0.02em;
+}
+
+.lease-table th {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #94A3B8;
+}
+
+.lease-table td {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* 2. Accessible Visible Focus States */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #A855F7;
+  outline-offset: 2px;
+  border-color: #A855F7;
+}
+
+button:focus-visible,
+.btn-action:focus-visible,
+.btn-emerald:focus-visible,
+.btn-outline:focus-visible,
+.btn-badge-free:focus-visible,
+.btn-action-interceptor:focus-visible,
+.chip:focus-visible {
+  outline: 2px solid #D4AF37;
+  outline-offset: 2px;
+}
+
+/* 3. Surface & Interactive Tool Improvements */
+.chip {
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.chip:hover {
+  background: rgba(56, 189, 248, 0.1);
+}
+
+#auditResultBox {
+  background: #0B0B10;
+  border: 1px solid #242436;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+#auditFindingsList {
+  line-height: 1.6;
+}
+
+/* 4. Short Transform/Opacity Motion on Result Appearance */
+@keyframes waveResultAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#auditResultBox,
+#leaseFeedbackBox {
+  animation: waveResultAppear 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* 5. Motion Accessibility Preference */
+@media (prefers-reduced-motion: reduce) {
+  #auditResultBox,
+  #leaseFeedbackBox {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .chip,
+  input,
+  select,
+  textarea,
+  button,
+  .btn-action,
+  .btn-outline {
+    transition: none !important;
+  }
+}

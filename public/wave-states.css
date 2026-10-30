@@ -1,0 +1,146 @@
+/* ==========================================================================
+   Agent Policy Auditor — Wave Interactive States & Accessibility
+   Theme: Precision Cryptographic Security Terminal
+   Scope: :focus-visible, :hover, :empty, error presentation, prefers-reduced-motion
+   ========================================================================== */
+
+/* 1. Accessible Visible Focus States (WCAG AAA Precision Rings) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.funnel-btn:focus-visible,
+.funnel-link:focus-visible,
+.btn-outline:focus-visible,
+.btn-badge-free:focus-visible,
+.btn-action:focus-visible,
+.btn-action-interceptor:focus-visible,
+.chip:focus-visible {
+  outline: 2px solid #D4AF37;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.25);
+}
+
+/* Secondary input focus enhancement */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline-color: #A855F7;
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.3);
+  border-color: #A855F7;
+}
+
+/* 2. Tactile Hover States */
+.funnel-link:hover {
+  color: #FFF;
+  text-shadow: 0 0 8px rgba(245, 230, 171, 0.5);
+}
+
+.btn-outline:hover {
+  background: rgba(212, 175, 55, 0.08);
+  border-color: #D4AF37;
+  color: #F5E6AB;
+  transform: translateY(-1px);
+}
+
+.btn-action:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+.btn-action:active,
+.btn-outline:active,
+.funnel-btn:active,
+.btn-action-interceptor:active,
+.chip:active {
+  transform: translateY(0);
+}
+
+.btn-action-interceptor:hover {
+  background: rgba(212, 175, 55, 0.2);
+  border-color: #D4AF37;
+  transform: translateY(-1px);
+}
+
+.chip:hover {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: #38BDF8;
+  color: #38BDF8;
+  transform: translateY(-1px);
+}
+
+.kpi-card:hover {
+  border-color: rgba(212, 175, 55, 0.3);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
+}
+
+.lease-table tbody tr {
+  transition: background 150ms ease;
+}
+
+.lease-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* 3. Empty Presentation */
+#auditFindingsList:empty,
+#leaseTableBody:empty,
+#leaseFeedbackBox:empty {
+  display: none;
+}
+
+.lease-table td[colspan] {
+  color: #94A3B8;
+  font-style: italic;
+  letter-spacing: 0.02em;
+}
+
+/* 4. Error Presentation & Validation */
+input:invalid:not(:placeholder-shown),
+textarea:invalid:not(:placeholder-shown) {
+  border-color: #F43F5E;
+  box-shadow: 0 0 8px rgba(244, 63, 94, 0.35);
+}
+
+.badge-warn {
+  border: 1px solid rgba(244, 63, 94, 0.5);
+  box-shadow: 0 0 10px rgba(244, 63, 94, 0.25);
+  animation: pulseWarning 2s infinite ease-in-out;
+}
+
+@keyframes pulseWarning {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.78;
+  }
+}
+
+#valViolationsBlocked {
+  transition: color 180ms ease;
+}
+
+/* 5. Prefers-Reduced-Motion Guarantees */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .btn-outline:hover,
+  .btn-action:hover,
+  .btn-action-interceptor:hover,
+  .chip:hover {
+    transform: none !important;
+  }
+
+  .badge-warn {
+    animation: none !important;
+  }
+}
