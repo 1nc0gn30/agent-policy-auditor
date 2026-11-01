@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [
-    { name = "Neal Frazier Tech", email = "contact@nullai.tech" }
+    { name = "1nc0gn30 • NullAI", email = "contact@nullai.tech" }
 ]
 classifiers = [
     "Programming Language :: Python :: 3",

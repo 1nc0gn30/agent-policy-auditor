@@ -2,7 +2,7 @@
   "name": "agent-policy-auditor",
   "version": "2.5.0",
   "description": "Autonomous capability leasing broker, permission manager, and static manifest security auditor for sovereign AI agents.",
-  "author": "Neal Frazier Tech (@1nc0gn30)",
+  "author": "1nc0gn30 (@1nc0gn30)",
   "license": "MIT",
   "scripts": {
     "serve": "python3 -m http.server 8106 --directory public",

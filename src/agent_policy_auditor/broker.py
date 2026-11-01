@@ -1,6 +1,6 @@
 """Autonomous Policy Broker and Time-Bound Capability Leaser.
 
-Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform.
+Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform.
 Provides HMAC-SHA256 signed capability leases with automatic TTL expiry,
 path glob matching, and emergency kill-switches.
 100% Python Standard Library — Zero External Dependencies.
@@ -21,7 +21,26 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-SECRET_KEY = os.environ.get("AGENT_POLICY_SECRET", secrets.token_hex(32))
+def _get_secret_key() -> str:
+    env_key = os.environ.get("AGENT_POLICY_SECRET", "").strip()
+    if env_key:
+        return env_key
+    key_file = Path.home() / ".local" / "share" / "zoth" / "policy_secret.key"
+    try:
+        if key_file.is_file():
+            val = key_file.read_text(encoding="utf-8").strip()
+            if val:
+                return val
+        key_file.parent.mkdir(parents=True, exist_ok=True)
+        generated = secrets.token_hex(32)
+        key_file.write_text(generated, encoding="utf-8")
+        os.chmod(key_file, 0o600)
+        return generated
+    except Exception:
+        return "zoth-sovereign-enclave-hmac-default-key-2026"
+
+
+SECRET_KEY = _get_secret_key()
 
 
 @dataclass
@@ -85,8 +104,25 @@ class PolicyBroker:
                     signature TEXT
                 )
             """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS broker_metrics (
+                    key TEXT PRIMARY KEY,
+                    val INTEGER DEFAULT 0
+                )
+            """)
             conn.commit()
             conn.close()
+
+    def _increment_violation(self) -> None:
+        self.violations_blocked += 1
+        try:
+            conn = sqlite3.connect(self.db_path)
+            cur = conn.cursor()
+            cur.execute("INSERT INTO broker_metrics (key, val) VALUES ('violations_blocked', 1) ON CONFLICT(key) DO UPDATE SET val = val + 1")
+            conn.commit()
+            conn.close()
+        except Exception:
+            pass
 
     def _load_from_db(self) -> None:
         with self._lock:
@@ -110,6 +146,10 @@ class PolicyBroker:
                     signature=r[11]
                 )
                 self.leases[lease.lease_id] = lease
+            cur.execute("SELECT val FROM broker_metrics WHERE key = 'violations_blocked'")
+            m_row = cur.fetchone()
+            if m_row is not None:
+                self.violations_blocked = max(self.violations_blocked, int(m_row[0]))
             conn.close()
             self.total_leases_granted = len(self.leases)
 
@@ -130,12 +170,13 @@ class PolicyBroker:
             lease_id = f"lease_{secrets.token_hex(6)}"
             now = time.time()
             expires_at = now + duration_sec
-            sig = self._generate_signature(lease_id, agent_id, capability, target, expires_at)
+            cap_upper = capability.upper()
+            sig = self._generate_signature(lease_id, agent_id, cap_upper, target, expires_at)
 
             lease = CapabilityLease(
                 lease_id=lease_id,
                 agent_id=agent_id,
-                capability=capability.upper(),
+                capability=cap_upper,
                 target=target,
                 granted_at=now,
                 expires_at=expires_at,
@@ -174,19 +215,20 @@ class PolicyBroker:
         cost_usd: float = 0.0
     ) -> Tuple[bool, str]:
         """Verify whether an action is authorized under an active lease."""
+        self._load_from_db()
         with self._lock:
             lease = self.leases.get(lease_id)
             if not lease:
-                self.violations_blocked += 1
+                self._increment_violation()
                 return False, "LeaseNotFound: No capability lease registered with this ID"
 
             if lease.revoked:
-                self.violations_blocked += 1
+                self._increment_violation()
                 return False, "LeaseRevoked: Capability lease was explicitly revoked by security operator"
 
             if lease.is_expired():
                 lease.active = False
-                self.violations_blocked += 1
+                self._increment_violation()
                 return False, f"LeaseExpired: Capability lease expired {time.time() - lease.expires_at:.1f}s ago"
 
             # Verify cryptographic signature
@@ -194,12 +236,12 @@ class PolicyBroker:
                 lease.lease_id, lease.agent_id, lease.capability, lease.target, lease.expires_at
             )
             if not hmac.compare_digest(lease.signature, expected_sig):
-                self.violations_blocked += 1
+                self._increment_violation()
                 return False, "TamperedSignature: Lease signature verification failed"
 
             # Verify capability type
             if lease.capability != capability.upper():
-                self.violations_blocked += 1
+                self._increment_violation()
                 return False, f"CapabilityMismatch: Required {capability.upper()}, lease only grants {lease.capability}"
 
             # Verify target match (supports glob matching)
@@ -213,20 +255,26 @@ class PolicyBroker:
                 matched = True
 
             if not matched:
-                self.violations_blocked += 1
+                self._increment_violation()
                 return False, f"TargetNotPermitted: Action target '{target_clean}' does not match lease pattern '{lease_target}'"
 
             # Check budget quota if applicable
             if lease.max_budget_usd > 0.0:
                 if lease.used_budget_usd + cost_usd > lease.max_budget_usd:
-                    self.violations_blocked += 1
+                    self._increment_violation()
                     return False, f"BudgetExceeded: Lease budget ${lease.max_budget_usd:.4f} exceeded (used: ${lease.used_budget_usd:.4f}, requested: ${cost_usd:.4f})"
                 lease.used_budget_usd += cost_usd
+                conn = sqlite3.connect(self.db_path)
+                cur = conn.cursor()
+                cur.execute("UPDATE leases SET used_budget_usd = ? WHERE lease_id = ?", (lease.used_budget_usd, lease.lease_id))
+                conn.commit()
+                conn.close()
 
             return True, "Authorized: Action matches active capability lease"
 
     def revoke_lease(self, lease_id: str) -> bool:
         """Revoke a specific lease immediately."""
+        self._load_from_db()
         with self._lock:
             lease = self.leases.get(lease_id)
             if not lease:
@@ -260,6 +308,7 @@ class PolicyBroker:
 
     def get_active_leases(self) -> List[Dict[str, Any]]:
         """Return all valid, non-expired leases."""
+        self._load_from_db()
         with self._lock:
             valid = []
             now = time.time()
@@ -272,6 +321,7 @@ class PolicyBroker:
 
     def get_stats(self) -> Dict[str, Any]:
         """Return operational telemetry."""
+        self._load_from_db()
         with self._lock:
             active_count = sum(1 for l in self.leases.values() if l.is_valid())
             revoked_count = sum(1 for l in self.leases.values() if l.revoked)

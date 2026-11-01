@@ -1,6 +1,6 @@
 """Static Manifest, Tool Schema & System Prompt Security Auditor.
 
-Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform.
+Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform.
 Audits AI agent tool definitions, MCP manifests, and system prompts
 against OWASP LLM Top 10 and MITRE ATLAS security standards.
 100% Python Standard Library — Zero External Dependencies.
