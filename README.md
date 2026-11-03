@@ -22,7 +22,7 @@ Enforces time-bound, cryptographically signed capability leases (HMAC-SHA256) ac
 - **Zero External Pip Dependencies**: 100% Python 3.10+ standard library (`http.server`, `socket`, `sqlite3`, `hmac`, `hashlib`, `json`, `urllib.parse`, `threading`, `dataclasses`, `time`).
 - **Cryptographic Capability Leasing (Port 8106)**:
   - Issues time-bound HMAC-SHA256 tokens granting granular agent scopes:
-    - `FS_READ` / `FS_WRITE`: Wildcard glob path bounds (`/home/zoth/workspace/**`).
+    - `FS_READ` / `FS_WRITE`: Wildcard glob path bounds (`~/workspace/**`).
     - `NET_EGRESS`: Domain allowlisting (`*.nullai.tech`).
     - `SHELL_EXEC`: Permitted command subsets.
     - `TOKEN_BUDGET`: Cumulative USD session spend caps.

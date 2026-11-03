@@ -19,7 +19,7 @@ class TestPolicyBroker(unittest.TestCase):
         lease = self.broker.grant_lease(
             agent_id="test_agent",
             capability="FS_READ",
-            target="/home/zoth/NullAITech/*",
+            target="~/NullAITech/*",
             duration_sec=60.0
         )
         self.assertTrue(lease.is_valid())
@@ -29,7 +29,7 @@ class TestPolicyBroker(unittest.TestCase):
         allowed, reason = self.broker.verify_action(
             lease_id=lease.lease_id,
             capability="FS_READ",
-            target="/home/zoth/NullAITech/project"
+            target="~/NullAITech/project"
         )
         self.assertTrue(allowed)
         self.assertIn("Authorized", reason)
@@ -43,7 +43,7 @@ class TestPolicyBroker(unittest.TestCase):
         allowed, reason = self.broker.verify_action(
             lease_id=lease.lease_id,
             capability="FS_WRITE",
-            target="/home/zoth/file.txt"
+            target="~/file.txt"
         )
         self.assertFalse(allowed)
         self.assertIn("CapabilityMismatch", reason)
