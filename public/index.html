@@ -1380,5 +1380,21 @@
     });
   </script>
   <script src="/assets/sovereign-upgrade.js" defer></script>
+
+  <script src="/sovereign_tutorial.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", function() {
+      if (window.createSovereignTutorial) {
+        window.createSovereignTutorial({
+          toolId: "agent-policy-auditor",
+          toolName: "Agent Policy Auditor",
+          tagline: "Automated security rule checker for agent permissions and system boundaries!",
+          accentColor: "#F59E0B",
+          steps: [{"icon": "\u2696\ufe0f", "title": "What is a Policy Audit?", "desc": "Checks whether your AI agent has too many dangerous superpowers (like root access, uncontrolled web scraping, or write access to system files)."}, {"icon": "\ud83d\udccb", "title": "Least-Privilege Scoring", "desc": "Generates an instant letter grade (A+ through F) based on whether your agent adheres to security best practices."}, {"icon": "\ud83d\udee1\ufe0f", "title": "One-Click Hardening", "desc": "Automatically generates secure policy configs to lock down file paths and network permissions."}]
+        });
+      }
+    });
+  </script>
+
 </body>
 </html>
