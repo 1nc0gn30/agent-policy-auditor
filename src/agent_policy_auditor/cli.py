@@ -7,11 +7,14 @@ Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform.
 from __future__ import annotations
 
 import argparse
+import ipaddress
 import json
+import os
 import sys
 import time
 import urllib.request
 from pathlib import Path
+from typing import List, Optional
 
 from agent_policy_auditor.auditor import ManifestAuditor
 from agent_policy_auditor.broker import PolicyBroker
@@ -21,7 +24,6 @@ from agent_policy_auditor.web_cockpit import serve
 def _default_bind_host() -> str:
     """Bind address: localhost unless explicitly opted in via $ZOTH_BIND_HOST or
     $HOST (IP literal only; zsh sets HOST to the hostname) or --host."""
-    import ipaddress, os
     for var in ("ZOTH_BIND_HOST", "HOST"):
         val = os.environ.get(var, "").strip()
         if val == "localhost":
@@ -35,20 +37,75 @@ def _default_bind_host() -> str:
     return "127.0.0.1"
 
 
+def _emit_status(host: str, port: int, as_json: bool) -> None:
+    stats = None
+    active = []
+    online = False
+    try:
+        with urllib.request.urlopen(f"http://{host}:{port}/api/stats", timeout=2.0) as resp:
+            stats = json.loads(resp.read().decode("utf-8"))
+            online = True
+        with urllib.request.urlopen(f"http://{host}:{port}/api/leases", timeout=2.0) as resp:
+            active = json.loads(resp.read().decode("utf-8")).get("leases", [])
+    except Exception:
+        broker = PolicyBroker()
+        stats = broker.get_stats()
+        active = broker.get_active_leases()
 
-def main() -> None:
+    if as_json:
+        print(json.dumps({
+            "service": "agent-policy-auditor",
+            "version": "2.5.0",
+            "online": online,
+            "host": host,
+            "port": port,
+            "stats": stats,
+            "active_leases": active,
+        }, indent=2))
+        return
+
+    print("\n" + "=" * 60)
+    print("  AGENT POLICY AUDITOR & LEASE BROKER — STATUS")
+    print("=" * 60)
+    print(f"  • Daemon Endpoint:      http://{host}:{port} ({'ONLINE' if online else 'LOCAL BROKER'})")
+    print(f"  • Total Leases Granted: {stats['total_leases_granted']}")
+    print(f"  • Active Leases:        {stats['active_leases_count']}")
+    print(f"  • Revoked Leases:       {stats['revoked_leases_count']}")
+    print(f"  • Violations Blocked:   {stats['violations_blocked']}")
+    print(f"  • Budget Allocated:     ${stats['total_budget_allocated_usd']:.2f}")
+    print("-" * 60)
+    if active:
+        print("  ACTIVE LEASES:")
+        for l in active:
+            print(f"    [{l['lease_id']}] Agent: {l['agent_id']} | Cap: {l['capability']} | Target: {l['target']} | TTL: {l['ttl_seconds']:.1f}s")
+    else:
+        print("  No active leases currently in effect.")
+    print("=" * 60 + "\n")
+
+
+def main(argv: Optional[List[str]] = None) -> None:
     parser = argparse.ArgumentParser(
+        prog="agent-policy",
         description="Agent Policy Auditor & Capability Leaser (Port 8106)"
     )
+    parser.add_argument("-v", "--version", action="version", version="agent-policy-auditor 2.5.0")
+    parser.add_argument("--status", action="store_true", help="Display active leases and broker telemetry")
+    parser.add_argument("--json", action="store_true", help="Emit structured JSON output")
+    parser.add_argument("--host", type=str, default="127.0.0.1", help="Daemon host (default: 127.0.0.1)")
+    parser.add_argument("--port", type=int, default=8106, help="Daemon port (default: 8106)")
+
     subparsers = parser.add_subparsers(dest="subcommand", help="Subcommand to run")
 
     # Serve Command
     serve_parser = subparsers.add_parser("serve", help="Launch the Cockpit REST API and web UI")
     serve_parser.add_argument("--port", type=int, default=8106, help="Port to bind (default: 8106)")
-    serve_parser.add_argument("--host", type=str, default=_default_bind_host(), help="Host interface (default: 127.0.0.1 or $ZOTH_BIND_HOST; use 0.0.0.0 only on trusted networks)")
+    serve_parser.add_argument("--host", type=str, default=_default_bind_host(), help="Host interface (default: 127.0.0.1 or $ZOTH_BIND_HOST)")
 
     # Status Command
-    subparsers.add_parser("status", help="Display active leases and broker telemetry")
+    status_parser = subparsers.add_parser("status", help="Display active leases and broker telemetry")
+    status_parser.add_argument("--host", type=str, default="127.0.0.1", help="Daemon host (default: 127.0.0.1)")
+    status_parser.add_argument("--port", type=int, default=8106, help="Daemon port (default: 8106)")
+    status_parser.add_argument("--json", action="store_true", help="Emit structured JSON output")
 
     # Lease Commands
     lease_parser = subparsers.add_parser("lease", help="Manage capability leases")
@@ -73,33 +130,20 @@ def main() -> None:
     # Audit Command
     audit_parser = subparsers.add_parser("audit", help="Audit an agent manifest or tool schema")
     audit_parser.add_argument("--file", type=str, required=True, help="Path to JSON manifest or prompt file")
+    audit_parser.add_argument("--json", action="store_true", help="Emit audit report as JSON")
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
+
+    if getattr(args, "status", False) or (getattr(args, "json", False) and not args.subcommand):
+        _emit_status(args.host, args.port, as_json=bool(getattr(args, "json", False)))
+        return
 
     if args.subcommand == "serve":
         serve(port=args.port, host=args.host)
         return
 
     if args.subcommand == "status":
-        broker = PolicyBroker()
-        stats = broker.get_stats()
-        active = broker.get_active_leases()
-        print("\n" + "=" * 60)
-        print("  🛡️  AGENT POLICY AUDITOR & LEASE BROKER — STATUS")
-        print("=" * 60)
-        print(f"  • Total Leases Granted: {stats['total_leases_granted']}")
-        print(f"  • Active Leases:        {stats['active_leases_count']}")
-        print(f"  • Revoked Leases:       {stats['revoked_leases_count']}")
-        print(f"  • Violations Blocked:   {stats['violations_blocked']}")
-        print(f"  • Budget Allocated:     ${stats['total_budget_allocated_usd']:.2f}")
-        print("-" * 60)
-        if active:
-            print("  ACTIVE LEASES:")
-            for l in active:
-                print(f"    [{l['lease_id']}] Agent: {l['agent_id']} | Cap: {l['capability']} | Target: {l['target']} | TTL: {l['ttl_seconds']:.1f}s")
-        else:
-            print("  No active leases currently in effect.")
-        print("=" * 60 + "\n")
+        _emit_status(args.host, args.port, as_json=bool(getattr(args, "json", False)))
         return
 
     if args.subcommand == "lease":
@@ -147,8 +191,11 @@ def main() -> None:
         raw = p.read_text(encoding="utf-8")
         auditor = ManifestAuditor()
         report = auditor.audit_manifest(raw, name=p.name)
+        if getattr(args, "json", False):
+            print(json.dumps(report.to_dict(), indent=2))
+            return
         print("\n" + "=" * 60)
-        print(f"  🛡️  MANIFEST AUDIT REPORT: {report.manifest_name}")
+        print(f"  MANIFEST AUDIT REPORT: {report.manifest_name}")
         print("=" * 60)
         print(f"  • Security Score: {report.security_score}/100 [{report.risk_level}]")
         print(f"  • Total Findings: {report.total_findings}")

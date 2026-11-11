@@ -1,11 +1,13 @@
 {
   "name": "agent-policy-auditor",
   "version": "2.5.0",
-  "description": "Autonomous capability leasing broker, permission manager, and static manifest security auditor for sovereign AI agents.",
-  "author": "1nc0gn30 (@1nc0gn30)",
+  "description": "Time-bound capability leasing broker, permission verifier, and static manifest security auditor for AI agents.",
+  "author": "1nc0gn30 (@1nc0gn30) • NullAI",
   "license": "MIT",
   "scripts": {
-    "serve": "python3 -m http.server 8106 --directory public",
-    "test": "PYTHONPATH=src python3 -m unittest discover -s tests"
+    "start": "PYTHONPATH=src python3 -m agent_policy_auditor.cli serve --port 8106",
+    "serve": "PYTHONPATH=src python3 -m agent_policy_auditor.cli serve --port 8106",
+    "serve:public": "python3 -m http.server 8106 --directory public",
+    "test": "PYTHONPATH=src python3 -m pytest -q tests"
   }
 }
